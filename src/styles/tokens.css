@@ -1,0 +1,121 @@
+/* ==========================================================================
+   Design tokens - the "studio" look shared with mikehiggins.me.uk's tools
+   (SEO News, Semantic Page Structure): near-black surfaces, hairline borders,
+   Inter for reading, Geist for headings, DM Mono for labels and numbers.
+
+   body[data-theme] sets the realm accent: neutral (teal - Grace, the library),
+   institution (brass - the Board), dream (violet - Molly, Dreamspace).
+   body.light-mode switches to the light palette.
+   ========================================================================== */
+
+:root {
+    /* Type */
+    --font-display: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+    --font-display-italic: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-ui: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --text-xs: 0.6875rem;   /* 11px - labels, pills */
+    --text-sm: 0.8125rem;   /* 13px - UI */
+    --text-md: 0.875rem;    /* 14px */
+    --text-body: 1rem;      /* 16px - story text */
+    --text-lg: 1.25rem;
+
+    /* Character colours (constant across themes) */
+    --molly: #8A6DFF;
+    --worthington: #C9A227;
+    --grace: #3FBBFF;
+    --vane: #9AA3AD;
+
+    /* Status colours */
+    --good: #34d399;
+    --bad: #f87171;
+    --warn: #fbbf24;
+
+    /* Studio (dark) palette */
+    --bg: #09090b;
+    --surface: #121215;
+    --surface-2: #18181c;
+    --surface-sunken: #0d0d10;
+    --ink: #f4f4f5;
+    --ink-soft: #a1a1aa;
+    --ink-faint: #8c8c96;
+    --rule: rgba(255, 255, 255, 0.08);
+    --rule-strong: rgba(255, 255, 255, 0.14);
+    --shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.8);
+    --overlay-scrim: rgba(0, 0, 0, 0.7);
+
+    --radius: 10px;
+    --radius-sm: 6px;
+    --stage-ratio: 800 / 300;
+    --header-h: 52px;
+
+    /* Realm defaults (neutral: teal) */
+    --accent: #2dd4bf;
+    --accent-2: #5eead4;
+    --accent-glow: rgba(45, 212, 191, 0.14);
+    --accent-ink: #042f2e;
+
+    --paper-bg: var(--surface);
+    --paper-ink: var(--ink);
+    --paper-border: var(--rule);
+    --paper-margin: transparent;
+}
+
+/* Declared on body (not :root) so they follow the light/dark palette. */
+body {
+    --paper-ink: var(--ink);
+    --paper-border: var(--rule);
+}
+
+body[data-theme="institution"] {
+    --accent: #e0b84a;
+    --accent-2: #C9A227;
+    --accent-glow: rgba(224, 184, 74, 0.13);
+    --accent-ink: #1c1405;
+    --paper-bg: linear-gradient(180deg, rgba(224, 184, 74, 0.04), transparent 60%), var(--surface);
+}
+
+body[data-theme="dream"] {
+    --accent: #a78bfa;
+    --accent-2: #3FD6FF;
+    --accent-glow: rgba(167, 139, 250, 0.16);
+    --accent-ink: #1e1036;
+    --paper-bg: linear-gradient(180deg, rgba(167, 139, 250, 0.06), transparent 60%), var(--surface);
+}
+
+/* ---------- Light ---------- */
+body.light-mode {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --surface-2: #f4f4f5;
+    --surface-sunken: #ececef;
+    --ink: #18181b;
+    --ink-soft: #52525b;
+    --ink-faint: #67676f;
+    --rule: rgba(0, 0, 0, 0.08);
+    --rule-strong: rgba(0, 0, 0, 0.15);
+    --shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.25);
+    --overlay-scrim: rgba(24, 24, 27, 0.45);
+
+    --good: #047857;
+    --bad: #b91c1c;
+    --warn: #a16207;
+
+    --accent: #0f766e;
+    --accent-glow: rgba(15, 118, 110, 0.1);
+    --accent-ink: #ffffff;
+    --paper-bg: var(--surface);
+}
+
+body.light-mode[data-theme="institution"] {
+    --accent: #8a6a12;
+    --accent-glow: rgba(138, 106, 18, 0.1);
+    --paper-bg: linear-gradient(180deg, rgba(138, 106, 18, 0.05), transparent 60%), var(--surface);
+}
+
+body.light-mode[data-theme="dream"] {
+    --accent: #6d28d9;
+    --accent-glow: rgba(109, 40, 217, 0.09);
+    --paper-bg: linear-gradient(180deg, rgba(109, 40, 217, 0.05), transparent 60%), var(--surface);
+}

@@ -1,0 +1,367 @@
+/* ==========================================================================
+   The paper-theatre stage
+   ========================================================================== */
+
+.stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--stage-ratio);
+    min-height: 170px;
+    overflow: hidden;
+    background: #07060a;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    isolation: isolate;
+    z-index: 1;
+}
+
+/* ---------- Scenery (crossfading frames of layered SVG) ---------- */
+.stage-scenery,
+.scenery-frame {
+    position: absolute;
+    inset: 0;
+}
+
+.scenery-frame {
+    opacity: 0;
+    transition: opacity 0.9s ease;
+}
+
+.scenery-frame.shown {
+    opacity: 1;
+}
+
+.scenery-frame svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Parallax layers are moved by JS; ease the movement. */
+.scenery-frame .layer {
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+    will-change: transform;
+}
+
+.stage-particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.stage-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+    background:
+        radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.55) 100%),
+        linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 32%);
+}
+
+/* ---------- Labels ---------- */
+.stage-location {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 9;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    color: #f4f4f5;
+    background: rgba(9, 9, 11, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 3px 10px;
+    backdrop-filter: blur(6px);
+}
+
+.stage-location::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    vertical-align: 1px;
+}
+
+.stage-location:empty {
+    display: none;
+}
+
+.stage-speaker {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    z-index: 9;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    color: #fafafa;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.stage-speaker:empty {
+    display: none;
+}
+
+.stage-speaker::before {
+    content: "";
+    display: block;
+    width: 22px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--accent);
+    margin-bottom: 5px;
+}
+
+/* ---------- Cast ---------- */
+.stage-cast {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.cast-member {
+    position: absolute;
+    bottom: 0;
+    height: 92%;
+    aspect-ratio: 200 / 260;
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1), opacity 0.5s ease, filter 0.5s ease;
+    animation: cast-enter 0.6s ease both;
+}
+
+.cast-member.pos-right { right: 5%; }
+.cast-member.pos-left { left: 5%; }
+.cast-member.pos-center { left: 50%; margin-left: -17%; }
+
+.cast-member.pos-left { animation-name: cast-enter-left; }
+
+@keyframes cast-enter {
+    from { opacity: 0; translate: 24px 0; }
+    to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes cast-enter-left {
+    from { opacity: 0; translate: -24px 0; }
+    to { opacity: 1; translate: 0 0; }
+}
+
+.cast-member .figure {
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 100%;
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.cast-member {
+    --rim: var(--char, #fff);
+}
+
+.cast-member .figure svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+    filter: drop-shadow(0 0 1.5px var(--rim)) drop-shadow(0 0 14px color-mix(in srgb, var(--rim) 55%, transparent));
+}
+
+.stage-cast {
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Faces point toward centre stage: the drawings face right, so flip those on the right. */
+.cast-member.pos-right .figure svg { transform: scaleX(-1); }
+
+/* Not speaking: step back into the shadows. */
+.cast-member.listening {
+    filter: brightness(0.55) saturate(0.6);
+    opacity: 0.85;
+}
+
+/* Moods - a silhouette shows feeling through posture and light. */
+.cast-member.mood-pleased .figure { transform: translateY(-2%) rotate(-2.5deg); }
+.cast-member.mood-angry .figure { transform: rotate(4deg) translateX(2%); }
+.cast-member.mood-angry { --rim: #E5604D; }
+.cast-member.mood-afraid .figure { transform: scale(0.95) translateX(-3%); animation: tremble 0.25s infinite; }
+.cast-member.mood-afraid { --rim: #c8d4ff; }
+.cast-member.mood-sad .figure { transform: translateY(3%) rotate(5deg); }
+.cast-member.mood-sad { filter: saturate(0.4) brightness(0.8); }
+.cast-member.mood-stern .figure { transform: translateY(-1%); }
+.cast-member.mood-thoughtful .figure { transform: rotate(3deg); }
+
+.cast-member.pos-right.mood-angry .figure { transform: rotate(-4deg) translateX(-2%); }
+.cast-member.pos-right.mood-pleased .figure { transform: translateY(-2%) rotate(2.5deg); }
+.cast-member.pos-right.mood-sad .figure { transform: translateY(3%) rotate(-5deg); }
+.cast-member.pos-right.mood-thoughtful .figure { transform: rotate(-3deg); }
+
+@keyframes tremble {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0.6px 0; }
+}
+
+/* Molly is a projection: translucent, softly flickering. */
+.cast-member.projection .figure {
+    animation: projection 5s ease-in-out infinite;
+}
+
+@keyframes projection {
+    0%, 100% { opacity: 0.92; }
+    45% { opacity: 0.78; }
+    50% { opacity: 0.95; }
+    52% { opacity: 0.7; }
+    55% { opacity: 0.9; }
+}
+
+/* ---------- Ending card on stage ---------- */
+.stage-card {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    perspective: 900px;
+}
+
+.stage-card:empty {
+    display: none;
+}
+
+.stage-card .tarot {
+    height: 88%;
+    animation: card-reveal 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 18px var(--accent-glow));
+}
+
+@keyframes card-reveal {
+    0% { opacity: 0; transform: rotateY(-90deg) translateY(10px) scale(0.9); }
+    60% { opacity: 1; }
+    100% { opacity: 1; transform: none; }
+}
+
+/* ---------- Scene-change effects ---------- */
+.stage-transition {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+}
+
+/* Into Dreamspace: a chromatic tear. */
+.stage-transition.tear {
+    animation: tear 0.9s ease-out both;
+    background:
+        linear-gradient(90deg, transparent 0 46%, rgba(63, 214, 255, 0.85) 48%, #fff 50%, rgba(255, 46, 154, 0.85) 52%, transparent 54%);
+    mix-blend-mode: screen;
+}
+
+@keyframes tear {
+    0% { opacity: 0; transform: scaleX(0.05); }
+    25% { opacity: 1; transform: scaleX(0.4) skewX(-12deg); }
+    100% { opacity: 0; transform: scaleX(3) skewX(0); }
+}
+
+/* Into the Board's world: ink spreads, then clears. */
+.stage-transition.ink {
+    background: radial-gradient(circle at 50% 55%, #050403 0 30%, rgba(5, 4, 3, 0.85) 45%, transparent 70%);
+    animation: ink 1s ease-out both;
+}
+
+@keyframes ink {
+    0% { opacity: 0; transform: scale(0.2); }
+    35% { opacity: 1; transform: scale(1.4); }
+    100% { opacity: 0; transform: scale(2.2); }
+}
+
+/* Anywhere else: a soft lamplight swell. */
+.stage-transition.glow {
+    background: radial-gradient(ellipse at 50% 60%, rgba(255, 220, 160, 0.35), transparent 70%);
+    animation: glow 0.9s ease-out both;
+}
+
+@keyframes glow {
+    0% { opacity: 0; }
+    30% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ==========================================================================
+   Animation classes used inside the SVG scenery
+   ========================================================================== */
+.scenery-frame .flicker { animation: flicker 3.2s infinite; }
+.scenery-frame .flicker.alt { animation-duration: 4.1s; animation-delay: -1.3s; }
+.scenery-frame .twinkle { animation: twinkle 4s ease-in-out infinite; }
+.scenery-frame .twinkle.alt { animation-delay: -2s; animation-duration: 5.5s; }
+.scenery-frame .bob { animation: bob 6s ease-in-out infinite; transform-box: fill-box; }
+.scenery-frame .bob.alt { animation-delay: -3s; animation-duration: 7.5s; }
+.scenery-frame .sway { animation: sway 7s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0; }
+.scenery-frame .wave { animation: wave 9s linear infinite; }
+.scenery-frame .wave.slow { animation-duration: 16s; }
+.scenery-frame .wave.rev { animation-direction: reverse; }
+.scenery-frame .pulse { animation: pulse 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.scenery-frame .spin { animation: spin 60s linear infinite; transform-box: fill-box; transform-origin: center; }
+.scenery-frame .rock { animation: rock 6s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 90%; }
+.scenery-frame .shimmer { animation: shimmer 2.6s ease-in-out infinite; }
+
+@keyframes flicker {
+    0%, 100% { opacity: 0.95; }
+    8% { opacity: 0.8; }
+    10% { opacity: 1; }
+    40% { opacity: 0.88; }
+    43% { opacity: 0.97; }
+    70% { opacity: 0.85; }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 1; }
+}
+
+@keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-1.5deg); }
+    50% { transform: rotate(1.5deg); }
+}
+
+@keyframes wave {
+    from { transform: translateX(0); }
+    to { transform: translateX(-160px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes rock {
+    0%, 100% { transform: rotate(-2deg) translateY(0); }
+    50% { transform: rotate(2deg) translateY(-3px); }
+}
+
+@keyframes shimmer {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.85; }
+}
+
+@media (max-width: 560px) {
+    .stage-speaker { font-size: 0.95rem; bottom: 9px; left: 12px; }
+    .stage-location { top: 10px; left: 10px; }
+    .cast-member { height: 86%; }
+}

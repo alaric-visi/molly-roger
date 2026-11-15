@@ -1,0 +1,164 @@
+/* ---------- Ending presentation ---------- */
+.ending-eyebrow {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 2px;
+}
+
+.ending-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+.ending-summary {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-soft);
+}
+
+.ending-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px dotted var(--rule);
+    break-inside: avoid;
+}
+
+.ending-summary-label {
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+
+.ending-summary-value {
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.ending-discovered {
+    margin-top: 10px;
+    padding-top: 8px;
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-top: 1px solid var(--rule);
+}
+
+.ending-discovered button {
+    margin-left: 8px;
+    font: inherit;
+    color: var(--ink);
+    background: none;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    padding: 2px 8px;
+    cursor: pointer;
+}
+
+.ending-discovered button:hover {
+    border-color: var(--accent);
+}
+
+.choice-btn.play-again {
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px;
+    border-color: var(--accent);
+    background: var(--accent-glow);
+}
+
+.choice-btn.play-again .choice-number {
+    display: none;
+}
+
+.choice-btn.play-again:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+    transform: none;
+}
+
+/* ---------- Act transition: curtains close, the title card shows, curtains open ---------- */
+.act-transition {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.act-transition.visible {
+    visibility: visible;
+    pointer-events: all;
+}
+
+.curtain {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 51%;
+    background:
+        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0 6px, transparent 6px 26px, rgba(255, 255, 255, 0.06) 26px 30px, transparent 30px 44px),
+        linear-gradient(180deg, #6d1424, #3d0a14 80%, #2a060d);
+    box-shadow: inset 0 -40px 60px rgba(0, 0, 0, 0.5);
+    transition: transform 0.75s cubic-bezier(0.6, 0, 0.3, 1);
+}
+
+.curtain-left { left: 0; transform: translateX(-102%); border-right: 3px solid #c9a227; }
+.curtain-right { right: 0; transform: translateX(102%); border-left: 3px solid #c9a227; }
+
+.act-transition.visible .curtain { transform: translateX(0); }
+
+.act-card {
+    position: relative;
+    text-align: center;
+    color: #f3e7c6;
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity 0.5s ease 0.45s, transform 0.5s ease 0.45s;
+}
+
+.act-transition.visible .act-card {
+    opacity: 1;
+    transform: none;
+}
+
+.act-ornament {
+    color: #c9a227;
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.act-ornament.flip {
+    transform: rotate(180deg);
+}
+
+.act-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 8vw, 3.6rem);
+    letter-spacing: -0.02em;
+    margin-top: 6px;
+    text-shadow: 0 2px 0 #2a060d, 0 0 30px rgba(201, 162, 39, 0.35);
+}
+
+.act-subtitle {
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+    color: #e6d3a5;
+    margin: 2px 0 10px;
+}

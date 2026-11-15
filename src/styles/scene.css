@@ -1,0 +1,768 @@
+/* ==========================================================================
+   The story card, choices and the sidebar HUD
+   ========================================================================== */
+
+.story-card {
+    position: relative;
+    background: var(--paper-bg);
+    border: 1px solid var(--rule);
+    border-top: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 16px 20px 12px;
+    transition: border-color 0.5s ease;
+}
+
+.scene-text {
+    max-width: 76ch;
+    min-height: 4em;
+    font-family: var(--font-body);
+    font-size: 0.97rem;
+    line-height: 1.65;
+    color: var(--paper-ink);
+    white-space: pre-line;
+    text-wrap: pretty;
+    cursor: default;
+}
+
+.scene-text p + p {
+    margin-top: 0.7em;
+}
+
+/* ---------- Dialogue ----------
+   Spoken lines carry the speaker's colour as a hairline and a name tag;
+   the quoted words are full ink, the narration around them softer. */
+.scene-text p.line {
+    position: relative;
+    padding: 1px 0 1px 13px;
+    border-left: 2px solid color-mix(in srgb, var(--speaker) 70%, transparent);
+}
+
+.scene-text p.line + p.line-cont {
+    margin-top: 0.45em;
+}
+
+.speaker-tag {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 1px 7px 0;
+    vertical-align: 0.08em;
+    font-family: var(--font-ui);
+    font-size: 0.66rem;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-radius: 4px;
+    color: color-mix(in srgb, var(--speaker) 82%, var(--ink));
+    background: color-mix(in srgb, var(--speaker) 13%, transparent);
+    border: 1px solid color-mix(in srgb, var(--speaker) 28%, transparent);
+}
+
+.scene-text p.line .said {
+    color: var(--paper-ink);
+}
+
+.scene-text p.line .aside {
+    color: var(--ink-soft);
+}
+
+.scene-text p.line-player {
+    border-left-style: dashed;
+}
+
+body.light-mode .speaker-tag {
+    color: color-mix(in srgb, var(--speaker) 55%, var(--ink));
+}
+
+.scene-text.typing {
+    cursor: pointer;
+}
+
+/* The caret follows the paragraph being typed. */
+.scene-text.typing p:last-child::after {
+    content: "▍";
+    animation: blink 1s infinite;
+    color: var(--accent);
+}
+
+.skip-hint {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-faint);
+    padding-top: 8px;
+    visibility: hidden;
+}
+
+.skip-hint.visible {
+    visibility: visible;
+}
+
+/* ---------- Choices ---------- */
+.choices-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    width: 100%;
+}
+
+.choices-container:empty {
+    display: none;
+}
+
+.choice-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 14px 9px 10px;
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.choice-btn:hover,
+.choice-btn:focus-visible {
+    border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    background: var(--surface-2);
+}
+
+.choice-btn:active {
+    transform: translateY(1px);
+}
+
+.choice-number {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-glow);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    transition: color 0.4s, background 0.4s, border-color 0.4s;
+}
+
+.choice-btn.risky {
+    border-color: color-mix(in srgb, var(--bad) 35%, transparent);
+}
+
+.choice-btn.risky:hover {
+    border-color: var(--bad);
+}
+
+.choice-btn.risky .choice-number {
+    color: var(--bad);
+    background: color-mix(in srgb, var(--bad) 12%, transparent);
+    border-color: color-mix(in srgb, var(--bad) 35%, transparent);
+}
+
+.risky-icon {
+    color: var(--bad);
+    margin-right: 7px;
+    font-size: 0.85em;
+}
+
+.choice-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.choice-btn.locked {
+    opacity: 0.55;
+    cursor: not-allowed;
+    border-style: dashed;
+    background: transparent;
+}
+
+.choice-btn.locked:hover {
+    border-color: var(--rule);
+    background: transparent;
+}
+
+.choice-btn.locked .choice-number {
+    color: var(--ink-faint);
+    background: transparent;
+    border-color: var(--rule);
+}
+
+.choice-hint {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    font-weight: 400;
+    color: var(--ink-faint);
+}
+
+.lock-icon {
+    margin-right: 7px;
+    font-size: 0.8em;
+    color: var(--ink-faint);
+}
+
+/* ---------- Sidebar HUD ---------- */
+.hud-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.relationship-container:empty::before {
+    content: "Your relationships appear here.";
+    font-size: var(--text-sm);
+    color: var(--ink-faint);
+}
+
+.relationship-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 7px 0;
+}
+
+.relationship-label {
+    font-size: var(--text-sm);
+    min-width: 118px;
+    color: var(--ink-soft);
+}
+
+.relationship-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.relationship-track {
+    flex: 1;
+    height: 6px;
+    background: var(--surface-sunken);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.relationship-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.relationship-value {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ink-faint);
+    min-width: 24px;
+    text-align: right;
+}
+
+.ledger-row .relationship-value { min-width: 0; white-space: nowrap; }
+.ledger-level.danger { color: var(--bad); }
+
+.ledger {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    align-items: center;
+    min-height: 13px;
+}
+
+.ledger-empty {
+    font-size: var(--text-xs);
+    color: var(--ink-faint);
+    white-space: nowrap;
+}
+
+.tally {
+    position: relative;
+    display: inline-flex;
+    gap: 2px;
+    height: 12px;
+}
+
+.tally i {
+    display: block;
+    width: 1.5px;
+    height: 100%;
+    background: var(--ink-soft);
+    border-radius: 1px;
+}
+
+.tally.full::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    top: 50%;
+    height: 1.5px;
+    background: var(--ink-soft);
+    transform: rotate(-28deg);
+}
+
+/* ---------- What changed ---------- */
+.changes-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.change-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--ink) 3%, transparent);
+    color: var(--ink-soft);
+    animation: fade-in 0.4s ease both;
+}
+
+.change-chip .relationship-dot { margin-right: 0; width: 6px; height: 6px; }
+.change-chip.up { border-color: color-mix(in srgb, var(--good) 40%, transparent); color: var(--good); }
+.change-chip.down { border-color: color-mix(in srgb, var(--bad) 40%, transparent); color: var(--bad); }
+.change-chip.item { border-color: color-mix(in srgb, var(--accent) 40%, transparent); color: var(--accent); }
+.change-chip.note { border-style: dashed; }
+
+/* ==========================================================================
+   Desktop: stage, text and choices share one screen
+   ========================================================================== */
+@media (min-width: 1024px) {
+    .stage {
+        flex: none;
+        aspect-ratio: auto;
+        height: clamp(170px, 33vh, 380px);
+    }
+
+    /* The text scrolls inside its card if a scene is long. */
+    .story-card {
+        flex: 1 1 auto;
+        min-height: 110px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+
+    .choices-container {
+        flex: none;
+        max-height: 40vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+}
+
+/* Wide screens: the stage across the top, then the story and the choices
+   side by side, so the choices are always in view. */
+@media (min-width: 1200px) {
+    .play {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+        grid-template-rows: auto auto auto minmax(0, 1fr);
+        grid-template-areas:
+            "trail  trail"
+            "banner banner"
+            "stage  stage"
+            "story  choices";
+        align-content: stretch;
+    }
+
+    .trail-bar { grid-area: trail; }
+    .continue-banner { grid-area: banner; }
+    .stage { grid-area: stage; height: clamp(170px, 28vh, 340px); }
+    .story-card { grid-area: story; min-height: 0; }
+
+    .choices-container {
+        grid-area: choices;
+        max-height: none;
+        min-height: 0;
+        align-content: start;
+        overflow-y: auto;
+    }
+
+    /* While a set piece plays it gets the whole lower area. */
+    .play:has(.setpiece) {
+        grid-template-areas:
+            "trail   trail"
+            "banner  banner"
+            "stage   stage"
+            "choices choices";
+    }
+
+    .play:has(.setpiece) .story-card {
+        display: none;
+    }
+
+    .scene-text {
+        max-width: 80ch;
+    }
+}
+
+@media (max-width: 760px) {
+    .story-card {
+        padding: 14px 14px 10px;
+    }
+
+    .scene-text {
+        font-size: 0.95rem;
+    }
+}
+
+/* Shorter screens: give the words more of the height. */
+@media (min-width: 1200px) and (max-height: 940px) {
+    .stage { height: clamp(150px, 24vh, 300px); }
+}
+
+@media (min-width: 1200px) and (max-height: 820px) {
+    .stage { height: clamp(140px, 21vh, 260px); }
+    .play { gap: 8px; padding-top: 8px; }
+    .story-card { padding: 12px 16px 8px; }
+}
+
+/* ==========================================================================
+   Sidebar: progress, current aim, crew, what you carry
+   ========================================================================== */
+.panel-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.progress-act,
+.crew-count {
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.panel-link {
+    font: inherit;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--accent);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.panel-link:hover { text-decoration: underline; }
+
+.act-track {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    margin: 0 0 10px;
+    padding: 0;
+}
+
+.act-step {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.act-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface-sunken);
+    border: 1px solid var(--rule);
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+.act-step.done .act-bar {
+    background: color-mix(in srgb, var(--accent) 55%, var(--surface-2));
+    border-color: transparent;
+}
+
+.act-step.current .act-bar {
+    background: var(--accent);
+    border-color: transparent;
+    box-shadow: 0 0 10px var(--accent-glow), 0 0 0 3px var(--accent-glow);
+}
+
+.act-short {
+    font-family: var(--font-ui);
+    font-size: 0.625rem;
+    text-align: center;
+    color: var(--ink-faint);
+}
+
+.act-step.current .act-short { color: var(--accent); }
+
+.objective {
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ink);
+}
+
+.objective:empty { display: none; }
+
+.objective-label {
+    display: block;
+    margin-bottom: 2px;
+    font-family: var(--font-ui);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+
+/* Crew avatars */
+.crew-panel:has(.crew-list:empty),
+.carried-panel:has(.carried-list:empty) {
+    display: none;
+}
+
+.crew-list,
+.carried-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.crew-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 10px;
+}
+
+.crew-member {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    animation: fade-in 0.4s ease both;
+}
+
+.avatar {
+    flex-shrink: 0;
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    color: var(--speaker);
+    background:
+        radial-gradient(circle at 60% 35%, color-mix(in srgb, var(--speaker) 45%, transparent), transparent 70%),
+        color-mix(in srgb, var(--speaker) 16%, var(--surface-2));
+    border: 1.5px solid color-mix(in srgb, var(--speaker) 60%, transparent);
+}
+
+.avatar svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.crew-name {
+    min-width: 0;
+    font-size: var(--text-sm);
+    color: var(--ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.crew-empty {
+    grid-column: 1 / -1;
+    font-size: var(--text-sm);
+    color: var(--ink-faint);
+}
+
+/* Carried items */
+.carried-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 4px 9px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    background: color-mix(in srgb, var(--ink) 3%, transparent);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.carried-chip i {
+    color: var(--accent);
+    font-size: 0.85em;
+}
+
+.carried-chip:hover,
+.carried-chip:focus-visible {
+    color: var(--ink);
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+/* ==========================================================================
+   Choices area while the scene is still being written: placeholder cards
+   with a soft shimmer, a "something's coming" pulse, and a skip button.
+   ========================================================================== */
+.choices-waiting {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    animation: fade-in 0.4s ease both;
+}
+
+.waiting-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 2px 6px;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+}
+
+.waiting-dots {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.waiting-dots i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: waiting-dot 1.2s ease-in-out infinite;
+}
+
+.waiting-dots i:nth-child(2) { animation-delay: 0.15s; }
+.waiting-dots i:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes waiting-dot {
+    0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-3px); }
+}
+
+.waiting-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 9px 14px 9px 10px;
+    border: 1px dashed color-mix(in srgb, var(--accent) 22%, var(--rule));
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--surface) 60%, transparent);
+    overflow: hidden;
+    animation: waiting-breathe 2.4s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.25s);
+}
+
+/* the number badge and a line of "text" */
+.waiting-card span:first-child {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    background: var(--accent-glow);
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.waiting-card span:last-child {
+    height: 8px;
+    width: calc(78% - var(--i) * 14%);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
+}
+
+/* light sweeping across each card in turn */
+.waiting-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 20%, color-mix(in srgb, var(--accent) 12%, transparent) 50%, transparent 80%);
+    transform: translateX(-100%);
+    animation: waiting-sweep 2.4s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.25s);
+}
+
+@keyframes waiting-sweep {
+    0% { transform: translateX(-100%); }
+    60%, 100% { transform: translateX(100%); }
+}
+
+@keyframes waiting-breathe {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+}
+
+.waiting-skip {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    padding: 5px 10px;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.waiting-skip:hover,
+.waiting-skip:focus-visible {
+    color: var(--ink);
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+.waiting-skip kbd {
+    font-family: var(--font-ui);
+    font-size: 0.625rem;
+    padding: 1px 5px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 4px;
+    color: var(--ink-faint);
+}
+
+/* Phones: one compact line instead of cards, to save height. */
+@media (max-width: 760px) {
+    .waiting-card { display: none; }
+    .choices-waiting { grid-auto-flow: column; justify-content: space-between; align-items: center; }
+    .waiting-head { padding: 0; }
+    .waiting-skip { margin-top: 0; }
+    .waiting-skip kbd { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .waiting-card,
+    .waiting-card::after,
+    .waiting-dots i { animation: none; }
+    .waiting-card::after { display: none; }
+}
