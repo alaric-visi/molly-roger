@@ -1,5 +1,7 @@
 # The Ghost of Molly Roger
 
+> ### **[Play the Live Game &rarr; https://archive.mikehiggins.me.uk/notes/games-26/molly-roger/](https://archive.mikehiggins.me.uk/notes/games-26/molly-roger/)**
+
 A branching narrative game and interactive Victorian paper theatre set in London, 1845, based on the SCP Foundation tale [*"The Ghost of Molly Roger"*](https://scp-wiki.wikidot.com/the-ghost-of-molly-roger) by psul. Licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) (see [`LICENSE`](LICENSE)).
 
 Built with vanilla ES modules and Vite, the project features a zero-DOM pure rules engine, 114 scenes across six acts, 17 endings (including a New Game+ meta-ending), four playable canvas/SVG mini-games ("set pieces"), a procedural Web Audio API sound synthesizer, layered parallax SVG stage art, a static story-graph linter, and a Monte Carlo playthrough simulator.
